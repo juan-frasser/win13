@@ -15,7 +15,14 @@ Un solo comando levanta PostgreSQL, backend y frontend (Ctrl+C detiene todo):
 ```bash
 ./dev.sh            # PostgreSQL en Docker
 ./dev.sh --sin-db   # base en memoria, sin Docker
+./dev.sh --demo      # además carga cuentas y vacantes de ejemplo (combinable)
 ```
+Cuentas de demostración (`--demo`): administrador `admin@ucn.edu.co` / `Admin12345`; empresa `rrhh@acme.co` y estudiante `ana.perez@ucn.edu.co`, ambos con `Clave12345`.
+
+### Qué hace cada rol
+- **Administrador:** audita (aprueba o rechaza) las vacantes que envían las empresas. No crea nada: solo ve las pendientes.
+- **Empresa:** publica vacantes y gestiona candidatos. Se crea en “Regístrate”.
+- **Estudiante:** busca vacantes aprobadas y se postula. Se crea en “Regístrate”.
 O por separado:
 ```bash
 docker-compose up -d            # PostgreSQL (o: docker compose up -d)

@@ -60,7 +60,7 @@ export default function PanelEstudiante() {
             <button onClick={() => postular(v.id)}>Postularme</button>
           </div>
         ))}
-        {!vacantes.length && <p>No hay vacantes disponibles con esos filtros.</p>}
+        {!vacantes.length && <p>No hay vacantes disponibles. Aparecen aquí cuando una empresa las publica y la coordinación las aprueba.</p>}
       </div>
       <h3>Mis postulaciones</h3>
       <table>

@@ -23,7 +23,13 @@ export default function PanelAdmin() {
     <Encabezado titulo="Coordinación" salir={salir} />
     <main>
       <div className="card"><h3>Vacantes pendientes de auditoría: {pendientes.length}</h3></div>
-      <table>
+      {!pendientes.length && (
+        <div className="card">
+          <p>No hay vacantes por auditar. Las empresas envían aquí sus vacantes para que las apruebes o rechaces antes de que los estudiantes puedan verlas.</p>
+          <p>Para probar: cierra sesión, crea una cuenta de <b>Empresa</b> en “Regístrate” y publica una vacante.</p>
+        </div>
+      )}
+      {pendientes.length > 0 && <table>
         <thead><tr><th>Vacante</th><th>Empresa</th><th>Programa · Modalidad</th><th>Apoyo</th><th></th></tr></thead>
         <tbody>{pendientes.map((v) => (
           <tr key={v.id}>
@@ -37,7 +43,7 @@ export default function PanelAdmin() {
             </td>
           </tr>
         ))}</tbody>
-      </table>
+      </table>}
     </main>
   </>);
 }
