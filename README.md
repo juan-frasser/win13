@@ -7,6 +7,7 @@ Prototipo funcional del Taller Integrador de Unidad 3 (Ingeniería de Software).
 - **Base de datos:** PostgreSQL 16 (`docker-compose.yml`)
 
 ## Módulos implementados
+(Además del módulo de administración de perfiles, descrito más abajo, que cubre el caso de uso UC1 del Taller 2.)
 1. **Registro y autenticación por roles** (RF-01, RNF-01): estudiantes y empresas se auto-registran; el administrador (coordinación) se siembra al arrancar. JWT + contraseñas con bcrypt.
 2. **Vacantes y postulaciones** (RF-02 a RF-05): la empresa publica (queda `PENDIENTE`), la coordinación aprueba o rechaza, el estudiante busca/filtra solo vacantes aprobadas y se postula, la empresa actualiza el estado del candidato.
 
@@ -20,7 +21,7 @@ Un solo comando levanta PostgreSQL, backend y frontend (Ctrl+C detiene todo):
 Cuentas de demostración (`--demo`): administrador `admin@ucn.edu.co` / `Admin12345`; empresa `rrhh@acme.co` y estudiante `ana.perez@ucn.edu.co`, ambos con `Clave12345`.
 
 ### Qué hace cada rol
-- **Administrador:** audita (aprueba o rechaza) las vacantes que envían las empresas. No crea nada: solo ve las pendientes.
+- **Administrador:** audita las vacantes que envían las empresas y administra perfiles: lista, crea, edita y activa/desactiva estudiantes y empresas (pestañas del panel). Desactivar bloquea el acceso de inmediato, incluso con una sesión abierta.
 - **Empresa:** publica vacantes y gestiona candidatos. Se crea en “Regístrate”.
 - **Estudiante:** busca vacantes aprobadas y se postula. Se crea en “Regístrate”.
 O por separado:
@@ -38,8 +39,8 @@ Cambia `JWT_SECRET` y la clave del administrador fuera de desarrollo.
 ## Pruebas
 ```bash
 cd backend
-npm test            # 9 pruebas unitarias (CP-01 a CP-09)
-npm run test:e2e    # 4 pruebas de integración sobre la API (IT-01 a IT-04)
+npm test            # 12 pruebas unitarias (CP-01 a CP-12)
+npm run test:e2e    # 5 pruebas de integración sobre la API (IT-01 a IT-05)
 ```
 Resultados y trazabilidad: [docs/evidencias-pruebas.md](docs/evidencias-pruebas.md).
 
@@ -50,5 +51,8 @@ Resultados y trazabilidad: [docs/evidencias-pruebas.md](docs/evidencias-pruebas.
 | `POST /vacantes` · `GET /vacantes/mias` | EMPRESA | Publicar / listar propias |
 | `GET /vacantes?q=&programa=&modalidad=` | ESTUDIANTE | Buscar vacantes aprobadas |
 | `GET /vacantes/pendientes` · `PATCH /vacantes/:id/estado` | ADMIN | Auditar |
+| `GET/POST /admin/estudiantes` · `PATCH /admin/estudiantes/:id` | ADMIN | Listar, crear y editar estudiantes |
+| `GET/POST /admin/empresas` · `PATCH /admin/empresas/:id` | ADMIN | Listar, crear y editar empresas |
+| `PATCH /admin/usuarios/:id/activo` | ADMIN | Activar o desactivar una cuenta |
 | `POST /postulaciones` · `GET /postulaciones/mias` | ESTUDIANTE | Postularse / seguimiento |
 | `GET /postulaciones/candidatos` · `PATCH /postulaciones/:id/estado` | EMPRESA | Gestionar candidatos |

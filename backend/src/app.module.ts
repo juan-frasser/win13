@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { VacantesModule } from './vacantes/vacantes.module';
 import { PostulacionesModule } from './postulaciones/postulaciones.module';
@@ -29,6 +30,6 @@ export function dbConfig(): TypeOrmModuleOptions {
 }
 
 @Module({
-  imports: [TypeOrmModule.forRoot(dbConfig()), AuthModule, VacantesModule, PostulacionesModule],
+  imports: [TypeOrmModule.forRoot(dbConfig()), AuthModule, AdminModule, VacantesModule, PostulacionesModule],
 })
 export class AppModule {}

@@ -7,4 +7,5 @@ export class Usuario {
   @Column({ unique: true }) email: string;
   @Column({ select: false }) password: string; // nunca se carga en relaciones ni respuestas
   @Column({ type: 'simple-enum', enum: Rol }) rol: Rol;
+  @Column({ default: true }) activo: boolean;
 }

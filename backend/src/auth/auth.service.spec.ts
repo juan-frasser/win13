@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { Rol } from './rol.enum';
 
-const repo = () => ({ findOne: jest.fn(), save: jest.fn() });
+const repo = () => ({ findOne: jest.fn(), save: jest.fn((e) => Promise.resolve(e)) });
 
 describe('AuthService', () => {
   let usuarios: ReturnType<typeof repo>, estudiantes: ReturnType<typeof repo>, empresas: ReturnType<typeof repo>;

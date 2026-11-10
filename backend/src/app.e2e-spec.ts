@@ -76,4 +76,30 @@ describe('Flujo de prácticas (e2e)', () => {
     const mias = await http.get('/postulaciones/mias').set(auth(tokens.estudiante)).expect(200);
     expect(mias.body[0].estado).toBe('SELECCIONADO');
   });
+
+  it('IT-05: el administrador crea, edita y desactiva perfiles; la cuenta desactivada pierde acceso', async () => {
+    await http.get('/admin/estudiantes').set(auth(tokens.empresa)).expect(403);
+
+    const nueva = await http.post('/admin/empresas').set(auth(tokens.admin))
+      .send({ email: 'rh@beta.co', password: 'Clave12345', nit: '900777', razonSocial: 'Beta SAS', sector: 'Salud' })
+      .expect(201);
+    expect(nueva.body.usuario.password).toBeUndefined();
+    await http.post('/admin/empresas').set(auth(tokens.admin))
+      .send({ email: 'otro@beta.co', password: 'Clave12345', nit: '900777', razonSocial: 'Dup', sector: 'x' }).expect(409);
+
+    const editada = await http.patch(`/admin/empresas/${nueva.body.id}`).set(auth(tokens.admin))
+      .send({ sector: 'Educación' }).expect(200);
+    expect(editada.body.sector).toBe('Educación');
+
+    const login = await http.post('/auth/login').send({ email: 'rh@beta.co', password: 'Clave12345' }).expect(201);
+    await http.patch(`/admin/usuarios/${nueva.body.usuario.id}/activo`).set(auth(tokens.admin))
+      .send({ activo: false }).expect(200);
+    await http.post('/auth/login').send({ email: 'rh@beta.co', password: 'Clave12345' }).expect(401);
+    await http.get('/vacantes/mias').set(auth(login.body.accessToken)).expect(401); // token previo ya no sirve
+
+    const lista = await http.get('/admin/estudiantes').set(auth(tokens.admin)).expect(200);
+    expect(lista.body.map((e: { nombres: string }) => e.nombres)).toContain('Ana');
+    const empresas = await http.get('/admin/empresas').set(auth(tokens.admin)).expect(200);
+    expect(empresas.body).toHaveLength(2); // ACME y Beta (desactivada, pero sigue listada)
+  });
 });

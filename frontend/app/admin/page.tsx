@@ -3,12 +3,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { api } from '../../lib/api';
 import { useSesion } from '../../lib/useSesion';
 import { Encabezado } from '../Encabezado';
+import { EMPRESAS, ESTUDIANTES, Gestion } from './Gestion';
 
 interface Vacante { id: string; titulo: string; descripcion: string; programa: string; modalidad: string; apoyoSostenimiento: number; empresa: { razonSocial: string } }
 
 export default function PanelAdmin() {
   const { listo, salir } = useSesion('ADMIN');
   const [pendientes, setPendientes] = useState<Vacante[]>([]);
+  const [pestana, setPestana] = useState<'vacantes' | 'estudiantes' | 'empresas'>('vacantes');
 
   const cargar = useCallback(async () => setPendientes(await api<Vacante[]>('/vacantes/pendientes')), []);
   useEffect(() => { if (listo) cargar(); }, [listo, cargar]);
@@ -22,6 +24,16 @@ export default function PanelAdmin() {
   return (<>
     <Encabezado titulo="Coordinación" salir={salir} />
     <main>
+      <div className="fila" style={{ marginBottom: 14 }}>
+        {(['vacantes', 'estudiantes', 'empresas'] as const).map((p) => (
+          <button key={p} className={pestana === p ? '' : 'sec'} onClick={() => setPestana(p)}>
+            {p === 'vacantes' ? `Vacantes por auditar (${pendientes.length})` : p[0].toUpperCase() + p.slice(1)}
+          </button>
+        ))}
+      </div>
+      {pestana === 'estudiantes' && <Gestion config={ESTUDIANTES} />}
+      {pestana === 'empresas' && <Gestion config={EMPRESAS} />}
+      {pestana === 'vacantes' && <>
       <div className="card"><h3>Vacantes pendientes de auditoría: {pendientes.length}</h3></div>
       {!pendientes.length && (
         <div className="card">
@@ -44,6 +56,7 @@ export default function PanelAdmin() {
           </tr>
         ))}</tbody>
       </table>}
+      </>}
     </main>
   </>);
 }

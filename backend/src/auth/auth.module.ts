@@ -20,6 +20,6 @@ import { Usuario } from './usuario.entity';
   ],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, AuthService],
 })
 export class AuthModule {}

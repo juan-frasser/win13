@@ -26,26 +26,40 @@ export class AuthService implements OnModuleInit {
     await this.usuarios.save({ email, password, rol: Rol.ADMIN });
   }
 
-  async registrarEstudiante({ email, password, ...perfil }: RegistroEstudianteDto) {
-    const usuario = await this.nuevoUsuario(email, password, Rol.ESTUDIANTE);
-    await this.estudiantes.save({ ...perfil, usuario });
-    return this.token(usuario);
+  async registrarEstudiante(dto: RegistroEstudianteDto) {
+    return this.token((await this.crearEstudiante(dto)).usuario);
   }
 
-  async registrarEmpresa({ email, password, ...perfil }: RegistroEmpresaDto) {
+  async registrarEmpresa(dto: RegistroEmpresaDto) {
+    return this.token((await this.crearEmpresa(dto)).usuario);
+  }
+
+  // Compartidos por el auto-registro y por el módulo de administración (UC1 del Taller 2).
+  async crearEstudiante({ email, password, ...perfil }: RegistroEstudianteDto) {
+    const usuario = await this.nuevoUsuario(email, password, Rol.ESTUDIANTE);
+    if (await this.estudiantes.findOne({ where: { documentoIdentidad: perfil.documentoIdentidad } })) {
+      throw new ConflictException('El documento ya está registrado');
+    }
+    return this.estudiantes.save({ ...perfil, usuario });
+  }
+
+  async crearEmpresa({ email, password, ...perfil }: RegistroEmpresaDto) {
     const usuario = await this.nuevoUsuario(email, password, Rol.EMPRESA);
-    await this.empresas.save({ ...perfil, usuario });
-    return this.token(usuario);
+    if (await this.empresas.findOne({ where: { nit: perfil.nit } })) {
+      throw new ConflictException('El NIT ya está registrado');
+    }
+    return this.empresas.save({ ...perfil, usuario });
   }
 
   async login({ email, password }: LoginDto) {
     const usuario = await this.usuarios.findOne({
       where: { email },
-      select: { id: true, rol: true, password: true },
+      select: { id: true, rol: true, password: true, activo: true },
     });
     if (!usuario || !(await bcrypt.compare(password, usuario.password))) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
+    if (usuario.activo === false) throw new UnauthorizedException('Cuenta desactivada');
     return this.token(usuario);
   }
 

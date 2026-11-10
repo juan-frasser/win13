@@ -1,7 +1,7 @@
 # Evidencias de pruebas
 
-Ejecución: `cd backend && npx jest --testRegex "\.(spec|e2e-spec)\.ts$" --coverage` — **4 suites, 13 pruebas, 13 aprobadas** (≈4,7 s).
-Cobertura global: 97,3 % sentencias · 98,9 % líneas · 95,8 % funciones · 70 % ramas.
+Ejecución: `cd backend && npx jest --testRegex "\.(spec|e2e-spec)\.ts$" --coverage` — **5 suites, 17 pruebas, 17 aprobadas**.
+Cobertura global: 95,4 % sentencias · 96,8 % líneas · 92,4 % funciones · 66,7 % ramas.
 
 ## Pruebas unitarias (Jest, repositorios simulados)
 | ID | Requisito | Caso | Resultado esperado | Resultado |
@@ -15,6 +15,9 @@ Cobertura global: 97,3 % sentencias · 98,9 % líneas · 95,8 % funciones · 70 
 | CP-07 | RF-03, RF-04 | Postular a vacante no aprobada | `BadRequestException`, no se guarda | Aprobado |
 | CP-08 | RF-03 | Postular dos veces | `ConflictException` | Aprobado |
 | CP-09 | RF-05 | Cambiar estado de candidato | Otra empresa → `Forbidden`; la dueña → actualiza | Aprobado |
+| CP-10 | UC1 | Crear estudiante desde administración | Reutiliza el registro y devuelve el perfil sin hash | Aprobado |
+| CP-11 | UC1 | Editar perfil | Inexistente → 404; NIT ya usado → 409 sin actualizar | Aprobado |
+| CP-12 | UC1 | Desactivar cuenta | Estudiante/empresa → ok; administrador → 400 | Aprobado |
 
 ## Pruebas de integración (API real + TypeORM en memoria, `supertest`)
 | ID | Caso | Resultado |
@@ -23,6 +26,7 @@ Cobertura global: 97,3 % sentencias · 98,9 % líneas · 95,8 % funciones · 70 
 | IT-02 | Validación de DTO (400), credenciales inválidas (401), sin token (401), rol incorrecto (403) | Aprobado |
 | IT-03 | Vacante nueva invisible al estudiante → aprobada por admin → visible con filtros | Aprobado |
 | IT-04 | Postulación, duplicado (409), listado de candidatos sin exponer el hash, cambio de estado visible al estudiante | Aprobado |
+| IT-05 | Administración: rol no admin → 403; crea empresa (sin hash), NIT duplicado → 409, edita, desactiva; login y token previo de la cuenta desactivada → 401; la cuenta sigue listada | Aprobado |
 
 ## Defecto encontrado por las pruebas
 IT-04 detectó que `GET /postulaciones/candidatos` devolvía el hash de contraseña del estudiante dentro de `estudiante.usuario` (relación `eager`). Corregido con `@Column({ select: false })` en `Usuario.password`; el login lo selecciona explícitamente. Tras el cambio la prueba pasa (cumple RNF-01).
