@@ -11,6 +11,12 @@ Prototipo funcional del Taller Integrador de Unidad 3 (Ingeniería de Software).
 2. **Vacantes y postulaciones** (RF-02 a RF-05): la empresa publica (queda `PENDIENTE`), la coordinación aprueba o rechaza, el estudiante busca/filtra solo vacantes aprobadas y se postula, la empresa actualiza el estado del candidato.
 
 ## Ejecutar en local
+Un solo comando levanta PostgreSQL, backend y frontend (Ctrl+C detiene todo):
+```bash
+./dev.sh            # PostgreSQL en Docker
+./dev.sh --sin-db   # base en memoria, sin Docker
+```
+O por separado:
 ```bash
 docker-compose up -d            # PostgreSQL (o: docker compose up -d)
 cd backend && npm install && npm run start:dev      # API en :3001
