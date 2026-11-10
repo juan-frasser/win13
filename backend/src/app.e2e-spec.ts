@@ -114,4 +114,26 @@ describe('Flujo de prácticas (e2e)', () => {
     await http.post('/auth/login').send({ email: 'ana@ucn.edu.co', password: 'Clave12345' }).expect(401);
     await http.post('/auth/login').send({ email: 'ana@ucn.edu.co', password: 'NuevaClave1' }).expect(201);
   });
+
+  it('IT-07: vacante desactivada: no se ve ni admite nuevos postulantes, pero el proceso en curso continúa', async () => {
+    const otro = await http.post('/auth/registro/estudiante')
+      .send({ email: 'luis@ucn.edu.co', password: 'Clave12345', documentoIdentidad: '200', nombres: 'Luis',
+        programaAcademico: 'Ingeniería Informática', semestreActual: 6 }).expect(201);
+    const nuevo = otro.body.accessToken;
+    await http.patch(`/vacantes/${vacanteId}/activa`).set(auth(tokens.estudiante)).send({ activa: false }).expect(403);
+
+    await http.patch(`/vacantes/${vacanteId}/activa`).set(auth(tokens.empresa)).send({ activa: false }).expect(200);
+
+    // Nadie nuevo la ve ni puede postularse...
+    expect((await http.get('/vacantes').set(auth(nuevo)).expect(200)).body).toHaveLength(0);
+    await http.post('/postulaciones').set(auth(nuevo)).send({ vacanteId }).expect(400);
+    // ...pero Ana conserva su postulación y la empresa sigue gestionándola.
+    const mias = await http.get('/postulaciones/mias').set(auth(tokens.estudiante)).expect(200);
+    expect(mias.body[0].vacante.id).toBe(vacanteId);
+    await http.patch(`/postulaciones/${postulacionId}/estado`).set(auth(tokens.empresa))
+      .send({ estado: 'EN_ENTREVISTA' }).expect(200);
+
+    await http.patch(`/vacantes/${vacanteId}/activa`).set(auth(tokens.empresa)).send({ activa: true }).expect(200);
+    expect((await http.get('/vacantes').set(auth(nuevo)).expect(200)).body).toHaveLength(1);
+  });
 });

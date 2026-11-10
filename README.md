@@ -22,7 +22,7 @@ Cuentas de demostración (`--demo`): administrador `admin@ucn.edu.co` / `Admin12
 
 ### Qué hace cada rol
 - **Administrador:** audita las vacantes que envían las empresas y administra perfiles: lista, crea, edita y activa/desactiva estudiantes y empresas y restablece sus claves (pestañas del panel). Desactivar bloquea el acceso de inmediato, incluso con una sesión abierta.
-- **Empresa:** publica vacantes y gestiona candidatos. Se crea en “Regístrate”.
+- **Empresa:** publica vacantes, las desactiva o reactiva y gestiona candidatos. Una vacante desactivada deja de verse y de admitir postulaciones nuevas, pero los estudiantes que ya estaban en proceso la conservan y la empresa sigue gestionándolos. Se crea en “Regístrate”.
 - **Estudiante:** busca vacantes aprobadas y se postula. Se crea en “Regístrate”.
 O por separado:
 ```bash
@@ -39,8 +39,8 @@ Cambia `JWT_SECRET` y la clave del administrador fuera de desarrollo.
 ## Pruebas
 ```bash
 cd backend
-npm test            # 13 pruebas unitarias (CP-01 a CP-13)
-npm run test:e2e    # 6 pruebas de integración sobre la API (IT-01 a IT-06)
+npm test            # 15 pruebas unitarias (CP-01 a CP-15)
+npm run test:e2e    # 7 pruebas de integración sobre la API (IT-01 a IT-07)
 ```
 Resultados y trazabilidad: [docs/evidencias-pruebas.md](docs/evidencias-pruebas.md).
 
@@ -49,6 +49,7 @@ Resultados y trazabilidad: [docs/evidencias-pruebas.md](docs/evidencias-pruebas.
 |---|---|---|
 | `POST /auth/registro/estudiante`, `/auth/registro/empresa`, `/auth/login` | público | Alta y sesión |
 | `POST /vacantes` · `GET /vacantes/mias` | EMPRESA | Publicar / listar propias |
+| `PATCH /vacantes/:id/activa` | EMPRESA | Cerrar o reabrir la vacante a nuevos postulantes |
 | `GET /vacantes?q=&programa=&modalidad=` | ESTUDIANTE | Buscar vacantes aprobadas |
 | `GET /vacantes/pendientes` · `PATCH /vacantes/:id/estado` | ADMIN | Auditar |
 | `GET/POST /admin/estudiantes` · `PATCH /admin/estudiantes/:id` | ADMIN | Listar, crear y editar estudiantes |

@@ -21,7 +21,7 @@ describe('PostulacionesService', () => {
   });
 
   it('CP-08: no permite postularse dos veces a la misma vacante', async () => {
-    vacantes.findOne.mockResolvedValue({ id: 'v1', estado: EstadoVacante.APROBADA });
+    vacantes.findOne.mockResolvedValue({ id: 'v1', estado: EstadoVacante.APROBADA, activa: true });
     postulaciones.findOne.mockResolvedValue({ id: 'p1' });
     await expect(service.postular('u1', 'v1')).rejects.toThrow(ConflictException);
   });
@@ -34,5 +34,11 @@ describe('PostulacionesService', () => {
       .rejects.toThrow(ForbiddenException);
     await expect(service.cambiarEstado('dueña', 'p1', { estado: EstadoPostulacion.SELECCIONADO }))
       .resolves.toMatchObject({ estado: EstadoPostulacion.SELECCIONADO });
+  });
+
+  it('CP-15: no admite postulaciones nuevas a una vacante desactivada por la empresa', async () => {
+    vacantes.findOne.mockResolvedValue({ id: 'v1', estado: EstadoVacante.APROBADA, activa: false });
+    await expect(service.postular('u1', 'v1')).rejects.toThrow(BadRequestException);
+    expect(postulaciones.save).not.toHaveBeenCalled();
   });
 });

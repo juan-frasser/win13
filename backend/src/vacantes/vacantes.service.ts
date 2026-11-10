@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { Empresa } from '../auth/empresa.entity';
@@ -21,7 +21,7 @@ export class VacantesService {
 
   // Búsqueda del estudiante: solo vacantes aprobadas.
   buscar({ q, programa, modalidad }: FiltroVacantesDto) {
-    const base: FindOptionsWhere<Vacante> = { estado: EstadoVacante.APROBADA };
+    const base: FindOptionsWhere<Vacante> = { estado: EstadoVacante.APROBADA, activa: true };
     if (programa) base.programa = programa;
     if (modalidad) base.modalidad = modalidad;
     const where = q
@@ -32,6 +32,14 @@ export class VacantesService {
 
   deLaEmpresa(usuarioId: string) {
     return this.vacantes.find({ where: { empresa: { usuario: { id: usuarioId } } }, order: { creadaEn: 'DESC' } });
+  }
+
+  // La empresa cierra o reabre su vacante; los postulantes actuales no se ven afectados.
+  async cambiarActiva(usuarioId: string, id: string, activa: boolean) {
+    const vacante = await this.vacantes.findOne({ where: { id } });
+    if (!vacante) throw new NotFoundException('Vacante no encontrada');
+    if (vacante.empresa.usuario.id !== usuarioId) throw new ForbiddenException('La vacante pertenece a otra empresa');
+    return this.vacantes.save({ ...vacante, activa });
   }
 
   pendientes() {

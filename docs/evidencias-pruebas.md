@@ -1,6 +1,6 @@
 # Evidencias de pruebas
 
-Ejecución: `cd backend && npx jest --testRegex "\.(spec|e2e-spec)\.ts$" --coverage` — **5 suites, 19 pruebas, 19 aprobadas**.
+Ejecución: `cd backend && npx jest --testRegex "\.(spec|e2e-spec)\.ts$" --coverage` — **5 suites, 22 pruebas, 22 aprobadas**.
 Cobertura global: 95,4 % sentencias · 96,8 % líneas · 92,4 % funciones · 66,7 % ramas.
 
 ## Pruebas unitarias (Jest, repositorios simulados)
@@ -19,6 +19,8 @@ Cobertura global: 95,4 % sentencias · 96,8 % líneas · 92,4 % funciones · 66,
 | CP-11 | UC1 | Editar perfil | Inexistente → 404; NIT ya usado → 409 sin actualizar | Aprobado |
 | CP-12 | UC1 | Desactivar cuenta | Estudiante/empresa → ok; administrador → 400 | Aprobado |
 | CP-13 | UC1 | Restablecer clave | Guarda solo el hash; inexistente → 404; administrador → 400 | Aprobado |
+| CP-14 | RF-02 | Cerrar/reabrir vacante | Solo la empresa dueña; inexistente → 404 | Aprobado |
+| CP-15 | RF-03 | Postular a vacante desactivada | `BadRequestException`, no se guarda | Aprobado |
 
 ## Pruebas de integración (API real + TypeORM en memoria, `supertest`)
 | ID | Caso | Resultado |
@@ -29,6 +31,7 @@ Cobertura global: 95,4 % sentencias · 96,8 % líneas · 92,4 % funciones · 66,
 | IT-04 | Postulación, duplicado (409), listado de candidatos sin exponer el hash, cambio de estado visible al estudiante | Aprobado |
 | IT-05 | Administración: rol no admin → 403; crea empresa (sin hash), NIT duplicado → 409, edita, desactiva; login y token previo de la cuenta desactivada → 401; la cuenta sigue listada | Aprobado |
 | IT-06 | Restablecer clave: rol no admin → 403, clave corta → 400, clave anterior → 401 y nueva → login correcto | Aprobado |
+| IT-07 | Vacante desactivada: un estudiante nuevo no la ve ni puede postularse (400); Ana conserva su postulación y la empresa sigue gestionándola; al reactivarla vuelve a verse | Aprobado |
 
 ## Defecto encontrado por las pruebas
 IT-04 detectó que `GET /postulaciones/candidatos` devolvía el hash de contraseña del estudiante dentro de `estudiante.usuario` (relación `eager`). Corregido con `@Column({ select: false })` en `Usuario.password`; el login lo selecciona explícitamente. Tras el cambio la prueba pasa (cumple RNF-01).

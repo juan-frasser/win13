@@ -4,7 +4,7 @@ import { api } from '../../lib/api';
 import { useSesion } from '../../lib/useSesion';
 import { Encabezado } from '../Encabezado';
 
-interface Vacante { id: string; titulo: string; modalidad: string; estado: string }
+interface Vacante { id: string; titulo: string; modalidad: string; estado: string; activa: boolean }
 interface Candidato { id: string; estado: string; vacante: Vacante; estudiante: { nombres: string; programaAcademico: string; semestreActual: number; usuario: { email: string } } }
 const ESTADOS = ['POSTULADO', 'EN_ENTREVISTA', 'SELECCIONADO', 'RECHAZADO'];
 
@@ -38,6 +38,11 @@ export default function PanelEmpresa() {
     cargar();
   }
 
+  async function alternarActiva(v: Vacante) {
+    await api(`/vacantes/${v.id}/activa`, { method: 'PATCH', body: { activa: !v.activa } });
+    cargar();
+  }
+
   if (!listo) return null;
   return (<>
     <Encabezado titulo="Empresa" salir={salir} />
@@ -59,8 +64,15 @@ export default function PanelEmpresa() {
       </div>
       <h3>Mis vacantes</h3>
       <table>
-        <thead><tr><th>Título</th><th>Modalidad</th><th>Estado</th></tr></thead>
-        <tbody>{vacantes.map((v) => <tr key={v.id}><td>{v.titulo}</td><td>{v.modalidad}</td><td><span className="badge">{v.estado}</span></td></tr>)}</tbody>
+        <thead><tr><th>Título</th><th>Modalidad</th><th>Auditoría</th><th>Recibe postulaciones</th><th></th></tr></thead>
+        <tbody>{vacantes.map((v) => (
+          <tr key={v.id}>
+            <td>{v.titulo}</td><td>{v.modalidad}</td>
+            <td><span className="badge">{v.estado}</span></td>
+            <td><span className="badge">{v.activa ? 'SÍ' : 'CERRADA'}</span></td>
+            <td><button className={v.activa ? 'mal' : 'ok'} onClick={() => alternarActiva(v)}>{v.activa ? 'Desactivar' : 'Reactivar'}</button></td>
+          </tr>
+        ))}</tbody>
       </table>
       <h3>Candidatos</h3>
       <table>

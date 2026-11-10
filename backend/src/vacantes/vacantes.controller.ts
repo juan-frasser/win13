@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ReqUsuario, Roles } from '../auth/guards';
 import { Rol } from '../auth/rol.enum';
-import { AuditarVacanteDto, CrearVacanteDto, FiltroVacantesDto } from './vacantes.dto';
+import { AuditarVacanteDto, CambiarActivaDto, CrearVacanteDto, FiltroVacantesDto } from './vacantes.dto';
 import { VacantesService } from './vacantes.service';
 
 @Controller('vacantes')
@@ -16,6 +16,11 @@ export class VacantesController {
 
   @Get('mias') @Roles(Rol.EMPRESA)
   mias(@Req() req: ReqUsuario) { return this.vacantes.deLaEmpresa(req.user.id); }
+
+  @Patch(':id/activa') @Roles(Rol.EMPRESA)
+  cambiarActiva(@Req() req: ReqUsuario, @Param('id') id: string, @Body() { activa }: CambiarActivaDto) {
+    return this.vacantes.cambiarActiva(req.user.id, id, activa);
+  }
 
   @Get('pendientes') @Roles(Rol.ADMIN)
   pendientes() { return this.vacantes.pendientes(); }

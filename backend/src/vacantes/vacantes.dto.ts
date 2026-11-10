@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 import { EstadoVacante, Modalidad } from './vacante.entity';
 
 export class CrearVacanteDto {
@@ -18,4 +18,8 @@ export class FiltroVacantesDto {
 
 export class AuditarVacanteDto {
   @IsEnum([EstadoVacante.APROBADA, EstadoVacante.RECHAZADA]) estado: EstadoVacante;
+}
+
+export class CambiarActivaDto {
+  @IsBoolean() activa: boolean;
 }

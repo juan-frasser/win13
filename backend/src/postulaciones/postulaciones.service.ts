@@ -22,6 +22,7 @@ export class PostulacionesService {
     if (!vacante || vacante.estado !== EstadoVacante.APROBADA) {
       throw new BadRequestException('La vacante no está disponible para postulación');
     }
+    if (!vacante.activa) throw new BadRequestException('La empresa cerró esta vacante a nuevas postulaciones');
     const existente = await this.postulaciones.findOne({
       where: { estudiante: { id: estudiante.id }, vacante: { id: vacanteId } },
     });

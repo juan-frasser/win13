@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { EstadoVacante, Modalidad } from './vacante.entity';
 import { VacantesService } from './vacantes.service';
 
@@ -25,7 +25,7 @@ describe('VacantesService', () => {
     vacantes.find.mockResolvedValue([]);
     await service.buscar({ modalidad: Modalidad.REMOTA });
     expect(vacantes.find.mock.calls[0][0].where).toMatchObject({
-      estado: EstadoVacante.APROBADA, modalidad: Modalidad.REMOTA,
+      estado: EstadoVacante.APROBADA, activa: true, modalidad: Modalidad.REMOTA,
     });
   });
 
@@ -39,5 +39,15 @@ describe('VacantesService', () => {
     vacantes.findOne.mockResolvedValueOnce({ id: 'v2', estado: EstadoVacante.PENDIENTE });
     await expect(service.auditar('v2', { estado: EstadoVacante.APROBADA }))
       .resolves.toMatchObject({ estado: EstadoVacante.APROBADA });
+  });
+
+  it('CP-14: solo la empresa dueña cierra o reabre su vacante', async () => {
+    vacantes.findOne.mockResolvedValue({ id: 'v1', activa: true, empresa: { usuario: { id: 'dueña' } } });
+    await expect(service.cambiarActiva('otra', 'v1', false)).rejects.toThrow(ForbiddenException);
+    expect(vacantes.save).not.toHaveBeenCalled();
+    await expect(service.cambiarActiva('dueña', 'v1', false)).resolves.toMatchObject({ activa: false });
+
+    vacantes.findOne.mockResolvedValue(null);
+    await expect(service.cambiarActiva('dueña', 'x', false)).rejects.toThrow(NotFoundException);
   });
 });

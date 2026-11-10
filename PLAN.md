@@ -6,6 +6,7 @@ Plataforma de prácticas profesionales UCN. Continúa los Talleres 1 y 2 (stack 
 | Criterio | Entrega |
 |---|---|
 | Administración de perfiles (UC1) | Módulo `admin`: el administrador lista, crea, edita y activa/desactiva estudiantes y empresas (RF-01). |
+| Cierre de vacantes (requisito nuevo) | La empresa desactiva su vacante: deja de verse y de admitir postulantes, pero los procesos en curso continúan. |
 | Prototipo (≥2 módulos) | **M1** Registro y autenticación por roles (RF-01, RNF-01). **M2** Publicación, auditoría y búsqueda de vacantes + postulación (RF-02, RF-03, RF-04, RF-05). |
 | Pruebas (≥3 unitarias) | Jest: pruebas unitarias de servicios + prueba de integración e2e del flujo completo. Resultados en `docs/evidencias-pruebas.md`. |
 | Despliegue inicial | Entorno local reproducible con `docker-compose` (PostgreSQL) + guion de video. VPS/Cloudflare queda como despliegue futuro. |

@@ -4,7 +4,7 @@ import { api } from '../../lib/api';
 import { useSesion } from '../../lib/useSesion';
 import { Encabezado } from '../Encabezado';
 
-interface Vacante { id: string; titulo: string; descripcion: string; requisitos: string; programa: string; modalidad: string; apoyoSostenimiento: number; empresa: { razonSocial: string } }
+interface Vacante { id: string; titulo: string; descripcion: string; requisitos: string; programa: string; modalidad: string; apoyoSostenimiento: number; activa: boolean; empresa: { razonSocial: string } }
 interface Postulacion { id: string; estado: string; vacante: Vacante }
 
 export default function PanelEstudiante() {
@@ -66,7 +66,7 @@ export default function PanelEstudiante() {
       <table>
         <thead><tr><th>Vacante</th><th>Empresa</th><th>Estado</th></tr></thead>
         <tbody>{mias.map((p) => (
-          <tr key={p.id}><td>{p.vacante.titulo}</td><td>{p.vacante.empresa.razonSocial}</td><td><span className="badge">{p.estado}</span></td></tr>
+          <tr key={p.id}><td>{p.vacante.titulo}</td><td>{p.vacante.empresa.razonSocial}</td><td><span className="badge">{p.estado}</span>{!p.vacante.activa && <small> · vacante cerrada a nuevos postulantes, tu proceso continúa</small>}</td></tr>
         ))}</tbody>
       </table>
     </main>

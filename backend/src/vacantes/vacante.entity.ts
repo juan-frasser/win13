@@ -14,6 +14,9 @@ export class Vacante {
   @Column({ type: 'simple-enum', enum: Modalidad }) modalidad: Modalidad;
   @Column({ default: 0 }) apoyoSostenimiento: number;
   @Column({ type: 'simple-enum', enum: EstadoVacante, default: EstadoVacante.PENDIENTE }) estado: EstadoVacante;
+  // Independiente de la auditoría: una vacante inactiva no se muestra ni admite postulaciones nuevas,
+  // pero los procesos ya iniciados continúan.
+  @Column({ default: true }) activa: boolean;
   @ManyToOne(() => Empresa, { eager: true }) empresa: Empresa;
   @CreateDateColumn() creadaEn: Date;
 }
