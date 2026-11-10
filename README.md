@@ -2,6 +2,8 @@
 
 Prototipo funcional del Taller Integrador de Unidad 3 (Ingeniería de Software). Ver [PLAN.md](PLAN.md).
 
+📚 **Documentación completa:** [docs/](docs/README.md) — arquitectura, modelo de datos, API, seguridad, guía de desarrollo y trazabilidad.
+
 - **Frontend:** Next.js 16 + React 19 (`frontend/`)
 - **Backend:** NestJS 11 + TypeORM + JWT + bcrypt (`backend/`)
 - **Base de datos:** PostgreSQL 16 (`docker-compose.yml`)

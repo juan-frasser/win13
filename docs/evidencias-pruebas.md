@@ -1,7 +1,7 @@
 # Evidencias de pruebas
 
 Ejecución: `cd backend && npx jest --testRegex "\.(spec|e2e-spec)\.ts$" --coverage` — **5 suites, 22 pruebas, 22 aprobadas**.
-Cobertura global: 95,4 % sentencias · 96,8 % líneas · 92,4 % funciones · 66,7 % ramas.
+Cobertura global: 95,6 % sentencias · 97,0 % líneas · 92,9 % funciones · 69,0 % ramas.
 
 ## Pruebas unitarias (Jest, repositorios simulados)
 | ID | Requisito | Caso | Resultado esperado | Resultado |
