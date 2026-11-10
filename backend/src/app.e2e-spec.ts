@@ -102,4 +102,16 @@ describe('Flujo de prácticas (e2e)', () => {
     const empresas = await http.get('/admin/empresas').set(auth(tokens.admin)).expect(200);
     expect(empresas.body).toHaveLength(2); // ACME y Beta (desactivada, pero sigue listada)
   });
+
+  it('IT-06: solo el administrador restablece claves; la anterior deja de servir y la nueva funciona', async () => {
+    const lista = await http.get('/admin/estudiantes').set(auth(tokens.admin)).expect(200);
+    const ana = lista.body.find((e: { nombres: string }) => e.nombres === 'Ana').usuario.id;
+
+    await http.patch(`/admin/usuarios/${ana}/password`).set(auth(tokens.estudiante)).send({ password: 'NuevaClave1' }).expect(403);
+    await http.patch(`/admin/usuarios/${ana}/password`).set(auth(tokens.admin)).send({ password: 'corta' }).expect(400);
+    await http.patch(`/admin/usuarios/${ana}/password`).set(auth(tokens.admin)).send({ password: 'NuevaClave1' }).expect(200);
+
+    await http.post('/auth/login').send({ email: 'ana@ucn.edu.co', password: 'Clave12345' }).expect(401);
+    await http.post('/auth/login').send({ email: 'ana@ucn.edu.co', password: 'NuevaClave1' }).expect(201);
+  });
 });

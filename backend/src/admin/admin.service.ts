@@ -1,5 +1,6 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { RegistroEmpresaDto, RegistroEstudianteDto } from '../auth/auth.dto';
 import { AuthService } from '../auth/auth.service';
@@ -51,6 +52,15 @@ export class AdminService {
     }
     await this.empresas.update(id, dto);
     return this.empresas.findOneOrFail({ where: { id } });
+  }
+
+  // Sin servicio de correo, la coordinación define la nueva clave y se la entrega al usuario.
+  async restablecerPassword(usuarioId: string, password: string) {
+    const usuario = await this.usuarios.findOne({ where: { id: usuarioId } });
+    if (!usuario) throw new NotFoundException('Usuario no encontrado');
+    if (usuario.rol === Rol.ADMIN) throw new BadRequestException('No se puede restablecer la clave de un administrador');
+    await this.usuarios.update(usuarioId, { password: await bcrypt.hash(password, 10) });
+    return { id: usuarioId };
   }
 
   // Se desactiva en lugar de borrar: conserva la trazabilidad de vacantes y postulaciones.

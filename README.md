@@ -21,7 +21,7 @@ Un solo comando levanta PostgreSQL, backend y frontend (Ctrl+C detiene todo):
 Cuentas de demostración (`--demo`): administrador `admin@ucn.edu.co` / `Admin12345`; empresa `rrhh@acme.co` y estudiante `ana.perez@ucn.edu.co`, ambos con `Clave12345`.
 
 ### Qué hace cada rol
-- **Administrador:** audita las vacantes que envían las empresas y administra perfiles: lista, crea, edita y activa/desactiva estudiantes y empresas (pestañas del panel). Desactivar bloquea el acceso de inmediato, incluso con una sesión abierta.
+- **Administrador:** audita las vacantes que envían las empresas y administra perfiles: lista, crea, edita y activa/desactiva estudiantes y empresas y restablece sus claves (pestañas del panel). Desactivar bloquea el acceso de inmediato, incluso con una sesión abierta.
 - **Empresa:** publica vacantes y gestiona candidatos. Se crea en “Regístrate”.
 - **Estudiante:** busca vacantes aprobadas y se postula. Se crea en “Regístrate”.
 O por separado:
@@ -39,8 +39,8 @@ Cambia `JWT_SECRET` y la clave del administrador fuera de desarrollo.
 ## Pruebas
 ```bash
 cd backend
-npm test            # 12 pruebas unitarias (CP-01 a CP-12)
-npm run test:e2e    # 5 pruebas de integración sobre la API (IT-01 a IT-05)
+npm test            # 13 pruebas unitarias (CP-01 a CP-13)
+npm run test:e2e    # 6 pruebas de integración sobre la API (IT-01 a IT-06)
 ```
 Resultados y trazabilidad: [docs/evidencias-pruebas.md](docs/evidencias-pruebas.md).
 
@@ -54,5 +54,6 @@ Resultados y trazabilidad: [docs/evidencias-pruebas.md](docs/evidencias-pruebas.
 | `GET/POST /admin/estudiantes` · `PATCH /admin/estudiantes/:id` | ADMIN | Listar, crear y editar estudiantes |
 | `GET/POST /admin/empresas` · `PATCH /admin/empresas/:id` | ADMIN | Listar, crear y editar empresas |
 | `PATCH /admin/usuarios/:id/activo` | ADMIN | Activar o desactivar una cuenta |
+| `PATCH /admin/usuarios/:id/password` | ADMIN | Restablecer la clave de un estudiante o empresa |
 | `POST /postulaciones` · `GET /postulaciones/mias` | ESTUDIANTE | Postularse / seguimiento |
 | `GET /postulaciones/candidatos` · `PATCH /postulaciones/:id/estado` | EMPRESA | Gestionar candidatos |

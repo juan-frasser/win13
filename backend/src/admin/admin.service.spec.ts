@@ -1,4 +1,5 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { Rol } from '../auth/rol.enum';
 import { AdminService } from './admin.service';
 
@@ -35,5 +36,19 @@ describe('AdminService', () => {
     usuarios.findOne.mockResolvedValueOnce({ id: 'u1', rol: Rol.ESTUDIANTE });
     await expect(service.cambiarActivo('u1', false)).resolves.toEqual({ id: 'u1', activo: false });
     expect(usuarios.update).toHaveBeenCalledWith('u1', { activo: false });
+  });
+
+  it('CP-13: restablecer clave guarda solo el hash y no aplica a administradores ni a usuarios inexistentes', async () => {
+    usuarios.findOne.mockResolvedValueOnce(null);
+    await expect(service.restablecerPassword('x', 'NuevaClave1')).rejects.toThrow(NotFoundException);
+    usuarios.findOne.mockResolvedValueOnce({ id: 'a1', rol: Rol.ADMIN });
+    await expect(service.restablecerPassword('a1', 'NuevaClave1')).rejects.toThrow(BadRequestException);
+    expect(usuarios.update).not.toHaveBeenCalled();
+
+    usuarios.findOne.mockResolvedValueOnce({ id: 'u1', rol: Rol.EMPRESA });
+    await service.restablecerPassword('u1', 'NuevaClave1');
+    const { password } = usuarios.update.mock.calls[0][1];
+    expect(password).not.toBe('NuevaClave1');
+    expect(await bcrypt.compare('NuevaClave1', password)).toBe(true);
   });
 });

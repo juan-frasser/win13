@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min, MinLength } from 'class-validator';
 
 export class ActualizarEstudianteDto {
   @IsOptional() @IsString() @IsNotEmpty() documentoIdentidad?: string;
@@ -15,4 +15,8 @@ export class ActualizarEmpresaDto {
 
 export class CambiarActivoDto {
   @IsBoolean() activo: boolean;
+}
+
+export class RestablecerPasswordDto {
+  @IsString() @MinLength(8) password: string;
 }

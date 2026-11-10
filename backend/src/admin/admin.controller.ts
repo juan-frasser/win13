@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { RegistroEmpresaDto, RegistroEstudianteDto } from '../auth/auth.dto';
 import { Roles } from '../auth/guards';
 import { Rol } from '../auth/rol.enum';
-import { ActualizarEmpresaDto, ActualizarEstudianteDto, CambiarActivoDto } from './admin.dto';
+import { ActualizarEmpresaDto, ActualizarEstudianteDto, CambiarActivoDto, RestablecerPasswordDto } from './admin.dto';
 import { AdminService } from './admin.service';
 
 @Controller('admin')
@@ -20,6 +20,10 @@ export class AdminController {
   @Post('empresas') crearEmpresa(@Body() dto: RegistroEmpresaDto) { return this.admin.crearEmpresa(dto); }
   @Patch('empresas/:id') actualizarEmpresa(@Param('id') id: string, @Body() dto: ActualizarEmpresaDto) {
     return this.admin.actualizarEmpresa(id, dto);
+  }
+
+  @Patch('usuarios/:id/password') restablecerPassword(@Param('id') id: string, @Body() { password }: RestablecerPasswordDto) {
+    return this.admin.restablecerPassword(id, password);
   }
 
   @Patch('usuarios/:id/activo') cambiarActivo(@Param('id') id: string, @Body() { activo }: CambiarActivoDto) {
