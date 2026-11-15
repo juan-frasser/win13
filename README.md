@@ -1,6 +1,6 @@
 # Plataforma de Prácticas Profesionales — UCN (Prototipo Unidad 3)
 
-Prototipo funcional del Taller Integrador de Unidad 3 (Ingeniería de Software). Ver [PLAN.md](PLAN.md).
+Prototipo funcional del Taller Integrador de Unidad 3 (Ingeniería de Software).
 
 📚 **Documentación completa:** [docs/](docs/README.md) — arquitectura, modelo de datos, API, seguridad, guía de desarrollo y trazabilidad.
 
